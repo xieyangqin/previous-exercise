@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>产品放大</title>
+    <style>
+        *{padding:0;margin:0}
+        .wrap{ margin:50px auto;width:312px;margin:50px auto;text-align:center}
+        .product{width:312px; height: 312px; border:1px #dddddd solid; }
+        .product img{width:100%;}
+        .bigger{ position:relative;width:100px;margin:10px auto}
+        .imgShow{ margin-top:20px;}
+        .imgShow ul{list-style:none }
+        .imgShow ul li{float:left;width:62px;height:62px;border:1px #dddddd solid;margin-right:10px;}
+        .imgShow ul li a{ cursor:pointer}
+        .imgShow ul li img{ max-width:100%; height:auto}
+    </style>
+    <script src="js/jquery-3.2.1.js"></script>
+    <script src="js/jquery.jqzoom.js"></script>
+</head>
+<body>
+<div class="wrap">
+    <div class="product">
+        <img src="img/pro_img/blue_one_big.jpg"/>
+    </div>
+    <div class="bigger">
+        <a href="img/pro_img/blue_one_big.jpg" title="介绍文字" id="a">
+            <img src="img/look.gif" />
+        </a>
+
+    </div>
+    <div class="imgShow">
+        <ul>
+            <li><a><img src="img/pro_img/blue_one.jpg"/></a></li>
+            <li><a><img src="img/pro_img/blue_two.jpg"/></a></li>
+            <li><a><img src="img/pro_img/blue_three.jpg"/></a></li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#a').jqzoom({
+            zoomWidth:200,
+            zoomHeight:200,
+            position:"bottom",
+            yOffset:50,
+            lens:true,
+            imageOpacity:1.0
+        });
+    })
+</script>
+</body>
+</html>

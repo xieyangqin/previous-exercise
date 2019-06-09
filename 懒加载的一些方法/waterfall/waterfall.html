@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .img-box {
+            position: absolute;
+            padding: 5px;
+        }
+
+        .img-box > div {
+            padding: 5px;
+            box-shadow: 0 0 3px 1px #6c757d;
+        }
+
+        .img-box img {
+            width: 230px;
+            overflow: auto;
+            transition: all 3s;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div class="img-box">
+        <div><img src="images/1.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/2.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/3.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/4.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/5.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/6.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/7.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/8.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/9.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/10.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/7.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/8.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/9.png" alt=""></div>
+    </div>
+    <div class="img-box">
+        <div><img src="images/10.png" alt=""></div>
+    </div>
+</div>
+<script>
+    /*
+    *
+    * 思路：
+    * 设置图片的位置：计算出浏览器一行几列： count 根据浏览器的宽度，
+    *                 动态加载后台的图片放入相应的元素中，遍历所有的元素，
+    *                 前count的元素高度存储在一个数组中，大于count的依次将元素的高度累加到数组中最小的那个高度值，
+    *                 而每次遍历的元素位置则根据数组中最小值的索引，和最小高度
+    *当滚动页面时，判断最后一次加载进来的元素的scrollTop值和滚动条+整个页面的可视高度的大小，若<,则再次加载图片
+    *
+    *
+    * */
+
+    window.onload = function () {
+        imageLocation();
+        var imgData = {'data': [{"src": "9.png"}, {"src": "10.png"}, {"src": "11.png"}, {"src": "12.png"}, {"src": "13.png"}, {"src": "14.png"}]};//模拟后台
+        var container = document.getElementById("container");
+        imageLocation();
+        window.onscroll = function () {
+            if (checkoutDistance()) {
+                for (var i = 0; i < imgData["data"].length; i++) {
+                    var imgBoxDiv = document.createElement('div');
+                    imgBoxDiv.className = "img-box";
+                    container.appendChild(imgBoxDiv);
+                    var div = document.createElement('div');
+                    imgBoxDiv.appendChild(div);
+                    var img = document.createElement('img');
+                    img.src = "images/" + imgData["data"][i].src + "";
+                    img.style.cssText='opacity:0;transform:scale(0)';
+                    div.appendChild(img);
+                    (function(img){
+                        setTimeout(function(){
+                            img.style.cssText='opacity:1;transform:scale(1)';
+                        },300);
+                    })(img)
+                }
+                imageLocation();
+            }
+        }
+        setTimeout(function(){
+              imageLocation();
+        },200);
+    };
+
+    function imageLocation() {
+        var container = document.getElementById("container");
+        var browserWidth = document.documentElement.offsetWidth || document.body.offsetWidth;
+
+        var imgBox = getImgBox(container);
+        var imgBoxWidth = imgBox[0].offsetWidth;
+        var count = Math.floor(browserWidth / imgBoxWidth);
+        container.style.width = count * imgBoxWidth + 'px';
+
+        var imgBoxHeight = [];
+        for (var i = 0; i < imgBox.length; i++) {
+            if (i < count) {
+                imgBoxHeight.push(imgBox[i].offsetHeight);
+                imgBox[i].style.left = i * imgBoxWidth + 'px';
+            } else {
+                var minHeight = getMinHeight(imgBoxHeight);
+                var minIndex = getMinHeightIndex(imgBoxHeight, minHeight);
+                imgBox[i].style.top = minHeight + 'px';
+                imgBox[i].style.left = minIndex * imgBoxWidth + 'px';
+                imgBoxHeight[minIndex] = imgBoxHeight[minIndex] + imgBox[i].offsetHeight;
+            }
+        }
+    }
+
+    function getMinHeightIndex(ary, minHeight) {
+        for (var i = 0; i < ary.length; i++) {
+            if (ary[i] === minHeight) {
+                return i;
+            }
+        }
+    }
+
+    function getMinHeight(ary) {
+        return Math.min.apply(null, ary);
+    }
+
+    function getImgBox(container) {
+        var imgBox = container.querySelectorAll('.img-box');
+        var ary = [];
+        for (var i = 0; i < imgBox.length; i++) {
+            ary.push(imgBox[i]);
+        }
+        return ary;
+    }
+
+    function checkoutDistance() {
+        var container = document.getElementById("container");
+        var box = getImgBox(container);
+        var lastTop = box[box.length - 1].offsetTop;
+        var scroll = document.documentElement.scrollTop || document.body.scrollTop;
+        var documentHeight = document.documentElement.clientHeight || document.body.clientHeight;
+        if (lastTop < scroll + documentHeight) {
+            console.log( scroll + documentHeight);
+            console.log(lastTop);
+            return true;
+        }
+    }
+</script>
+</body>
+</html>

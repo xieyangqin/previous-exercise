@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>戳气球</title>
+    <style>
+        *{padding:0;margin:0}
+        body{overflow:hidden;position: relative;}
+        .ballon{position:absolute;width: 160px; height: 160px; background: #ffffff; border-radius: 160px 140px 80px 140px; box-shadow: inset 0px 0px 80px 10px pink; transform:rotate(45deg)}
+        .ballon::after{content: ''; display: block; position: absolute; bottom:0;right:2px; width:0; height:0;
+            border:10px  solid transparent;  border-bottom: 10px solid pink; border-radius: 10px; transform: rotate(-45deg)}
+    </style>
+
+</head>
+<body>
+
+<script>
+    //1、初始化
+   window.onload=function(){
+        var wH=window.innerHeight;
+        var wW=window.innerWidth;
+        var bW=160;
+        var ballons=[];
+
+        var timer;
+       init(11);
+       timer=setInterval(move,100);
+
+       document.addEventListener('click',function(e){
+           if(e.target.className==='ballon'){
+               // console.log(e.target.className);
+               boom.call( e.target,function(){ e.target.parentNode.removeChild(e.target);});
+               init(1);
+               var index=ballons.indexOf(e.target);
+               //   console.log(ballons);
+               ballons.splice(index,1)
+
+           }
+       })
+
+       function boom(cb){
+           var rotate=[30,80];
+           var index=0;
+           this.timer=setInterval(function(){//定时器中的this一定是只想window，应为
+               if(this.offsetWidth<10) {
+                   cb&&cb();
+                   clearInterval(this.timer);
+               }
+               index++;
+               index%=2;
+               //console.log(this);
+               this.speed++;
+               this.style.width=this.offsetWidth-10+'px';
+
+               this.style.height =this.offsetHeight-10+'px';
+               this.style.top=this.offsetTop-this.speed+'px';
+               this.style.transform='rotate('+rotate[index] +'deg)';
+           }.bind(this),1000/60);//自定义属性
+       }
+
+       function init(num){
+           var frag=document.createDocumentFragment();
+           for(var i=0;i<num;i++){
+               var oBallon=document.createElement('div');
+               oBallon.classList.add('ballon');//JS添加类名
+               oBallon.speed=~~(Math.random()*7)+2;
+               ballons.push(oBallon);
+               oBallon.style.top=wH+'px';
+
+               var l=Math.max(0,~~(Math.random()*wW)-bW);
+               oBallon.style.left=l+'px';
+               frag.appendChild(oBallon);
+           }
+           document.body.appendChild(frag);
+       }
+
+       function move() {
+           for (var i = 0, len = ballons.length; i < len; i++) {
+               //console.log(ballons[i].speed);
+               ballons[i].style.top = ballons[i].offsetTop - ballons[i].speed + 'px';
+               var current=parseInt(ballons[i].style.top);
+               if(current<-bW){
+                   ballons[i].style.top=wH+'px';
+               }
+           }
+       }
+   }
+
+</script>
+</body>
+</html>

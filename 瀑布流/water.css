@@ -1,0 +1,23 @@
+*{
+    margin:0;
+    padding:0;
+}
+#container{
+    margin:0 auto;
+    position: relative;
+}
+.box{
+    float: left;
+    padding: 5px;
+}
+.box-img{
+    padding: 5px;
+    box-shadow:0 0 5px;
+}
+.box-img img{
+    width: 230px;
+    height:auto;
+    transition:0.7s
+}
+
+

@@ -1,0 +1,100 @@
+<!--
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<style type="text/css">
+    .phoneNumber::before {
+        content:'\260E';
+        font-size: 15px;
+    }
+</style>
+<p class="phoneNumber">12345645654</p>
+
+
+
+
+
+-->
+<!--<!DOCTYPE html>
+<meta charset="utf-8" />
+<style type="text/css">
+    p::before{
+        content: "《";
+        color: blue;
+    }
+    p::after{
+        content: "》";
+        color: blue;
+    }
+</style>
+<p>平凡的世界</p>-->
+<!--<style type="text/css">
+    a::after{
+        content: "(" attr(href) ")";
+    }
+</style>
+<a href="http://www.cnblogs.com/starof">starof</a>-->
+
+<!--
+
+<style>
+    a::before{
+        content: url("https://www.baidu.com/img/baidu_jgylogo3.gif");
+    }
+    a::after{
+        content:"("attr(href)")";
+    }
+    a{
+        text-decoration: none;
+    }
+</style>
+-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;
+<body><a href="http://www.baidu.com">百度</a>
+</body>
+-->
+
+
+
+
+<html>
+<meta charset="utf-8" />
+<style type="text/css">
+    body{
+        background:blue;
+    }
+div{
+    width:300px;
+    height:300px;
+    border:1px black solid;
+    position:relative;
+}
+    div::before,div::after{
+        content: '';
+        position:absolute;
+        width:100%;
+        height: 100%;;
+        background-color: #b0e11e;
+        border-radius:50%;
+        background:url("img/bg.png") no-repeat left top;
+        transition:transform 1s;
+        backface-visibility:hidden;/*使其背面不可见*/
+    }
+    .box::before{
+        transform:rotateY(-180deg);
+    }
+    div::after{
+        background:url("img/bg.png") no-repeat right top;
+    }
+    .box:hover::before{
+        transform: rotateY(0deg);
+    }
+    .box:hover::after{
+        transform: rotateY(180deg);
+    }
+</style>
+
+<body>
+<div class="box"></div>
+</body>
+</html>
+
+

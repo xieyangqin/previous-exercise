@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>play_plane</title>
+    <style>
+        *{padding:0;margin:0}
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    window.onload=function(){
+        Game.exe();
+    }
+
+    var Game={
+        //启动
+        score : 0,
+        exe:function(){
+            document.body.style.background='#000';
+            var oDiv=document.createElement('div');
+            oDiv.id='GameBox';
+            oDiv.style.cssText='width:300px;height:500px;overflow:hidden;border:10px solid #fff;font-family:"Microsoft yahei";margin:50px auto;text-align:center;position:relative;';
+            document.body.appendChild(oDiv);
+            this.init();
+        },
+        //初始化
+        init:function(){
+            this.score=0;
+            var oDiv = document.getElementById('GameBox');
+             oDiv.innerHTML='';
+            var oH=document.createElement('h1');
+
+            oH.style.cssText='padding-top:50px;color:#fff;font-size:26px;font-weight:normal';
+            oH.innerHTML='飞机大战';
+            oDiv.appendChild(oH);
+
+
+            var This=this;
+            var html='';
+            for(var i=0;i<4;i++){
+
+                var oP=document.createElement('p');
+                oP.index=i;
+                oP.style.cssText='width:150px;height:40px;color:#000;background:#fff;margin:50px auto;line-height:40px;font-size:14px;cursor:pointer';
+                oP.onmouseenter = function(){
+                    this.style.background = '#f60';
+                    this.style.color = '#fff';
+                };
+                oP.onmouseleave = function(){
+                    this.style.background = '#fff';
+                    this.style.color = '#000';
+                };
+                oP.onclick=function(evnt){
+                    var evnt=evnt||window.event;
+                    This.start(oDiv,evnt,this.index);
+                }
+                switch(i){
+                    case 0:
+                        html='简单难度';
+                        break;
+                    case 1:
+                        html='中等难度';
+                        break;
+                    case 2:
+                        html='困难难度';
+                        break;
+                    case 3:
+                        html='香芹附体';
+                        oP.style.color='red';
+                        oP.onmouseleave = function(){
+                            this.style.background = '#fff';
+                            this.style.color = 'red';
+                        };
+                        break;
+                }
+                oP.innerHTML=html;
+                oDiv.appendChild(oP);
+            }
+        },
+        start:function(oDiv,e,index){
+            var oS = document.createElement('span');
+            oS.innerHTML = this.score;
+            oS.style.cssText = 'position:absolute;left:15px;top:10px;font-size:14px;color:#fff';
+            oDiv.appendChild( oS );
+
+            oDiv.innerHTML='';
+            this.plane(oDiv,e,index);
+            this.enemy(oDiv,index,oS);
+        },
+        plane:function(oGameBox,e,index){
+            var x=e.pageX,
+                y=e.pageY;
+
+            var oPlane = new Image(); // document.createElement('img');
+            oPlane.src = 'img/plane.png';
+            oPlane.width = 60;
+            oPlane.height = 36;
+            oPlane.id='plane';
+            var t= -(-oGameBox.offsetTop-parseInt(oGameBox.style.borderWidth)-oPlane.height/2);
+            var l=-(-oGameBox.offsetLeft-parseInt(oGameBox.style.borderWidth)-oPlane.width/2);
+
+            window.onresize = function(){
+                l= -(-oGameBox.offsetLeft-parseInt(oGameBox.style.borderWidth)-oPlane.width/2);//重置
+            };
+           // oPlane.style.style='display:block;position:absolute;left:0px;top:0px;';
+            oPlane.style.cssText = 'display:block;position:absolute;top:'+(y-t)+'px;left:'+(x-l)+'px;';
+            oGameBox.appendChild(oPlane);
+
+            var minLeft=-oPlane.width/2;
+            var maxLeft=oGameBox.clientWidth-oPlane.width/2;
+            var minTop=0;
+            var maxTop=oGameBox.clientHeight-oPlane.height;
+
+            document.onmousemove=function(ee){
+                var ee=ee||window.event;
+
+                var left=ee.pageX-l;
+                var top=ee.pageY-t;
+                //console.log(ee.pageX);
+                left=Math.max(left,minLeft);
+                left=Math.min(left,maxLeft);
+
+                top=Math.max(top,minTop);
+                top=Math.min(top,maxTop);
+
+                 oPlane.style.left=left+'px';
+                 oPlane.style.top=top+'px';
+            }
+            this.biubiubiu(oPlane,oGameBox,index);
+        },
+        biubiubiu:function(oPlane,oGameBox,index){
+            var speed;
+            switch ( index )
+            {
+                case 0:
+                    speed = 300;
+                    break;
+                case 1:
+                    speed = 200;
+                    break;
+                case 2:
+                    speed = 100;
+                    break;
+                case 3:
+                    speed = 10;
+                    break;
+            }
+
+            Game.biutimer=setInterval(function(){
+                var oBiu = new Image();
+                oBiu.src='img/bullet.png';
+                oBiu.width=6;
+                oBiu.height=22;
+                oBiu.className='biu';
+                oBiu.style.cssText='position:absolute;left:'+(oPlane.offsetLeft+oPlane.width/2-oBiu.width/2) +'px;top:'+ (oPlane.offsetTop-oPlane.height/2+3)+'px ';
+                oGameBox.appendChild(oBiu);
+                oBiu.timer=setInterval(function(){
+                    oBiu.style.top=oBiu.offsetTop-10+'px';
+                    if ( oBiu.offsetTop < -oBiu.height )
+                    {
+                        clearInterval( oBiu.timer );
+                        oBiu.parentNode.removeChild( oBiu );
+                    }
+                },13)
+            },speed);//子弹速度
+        },
+        enemy:function(oDiv,index,oS){
+            var speed;
+            switch ( index )
+            {
+                case 0:
+                    speed = 600;
+                    break;
+                case 1:
+                    speed = 400;
+                    break;
+                case 2:
+                    speed = 200;
+                    break;
+                case 3:
+                    speed = 10;
+                    break;
+            }
+
+            var plane=document.getElementById('plane');
+            Game.enemyTimer=setInterval(function(){
+                var oEnemy=new Image();
+                oEnemy.src='img/enemy.png';
+                oEnemy.width=23;
+                oEnemy.height=30;
+                var left=Math.random()*oDiv.clientWidth-oEnemy.width/2;
+
+                oEnemy.style.cssText='position:absolute;top:'+(-oEnemy.height) +'px;left:'+ left+'px;';
+                oDiv.appendChild(oEnemy);
+                var speed=Math.random()*7;
+                oEnemy.timer=setInterval(function(){
+
+                    oEnemy.style.top=oEnemy.offsetTop+speed+'px';
+                    if(oEnemy.offsetTop>oDiv.clientHeight){
+
+                        clearInterval(oEnemy.timer);
+                        oEnemy.parentNode.removeChild( oEnemy );
+                    }
+                },13)//移动速度
+
+                //和子弹的碰撞检测
+                var allBiu=Game.getClass('biu');
+                oEnemy.boTimer=setInterval(function(){
+                    for(var i=0;i<allBiu.length;i++){
+                        if(Game.boom(oEnemy,allBiu[i])){
+                            Game.score++;
+                            oS.innerHTML=Game.score;
+                            oEnemy.src='img/boom.png';
+                           // oEnemy.parentNode.removeChild(oEnemy);
+                           clearInterval(oEnemy.boTimer);//当装上后不用次定时器
+                            setTimeout(function(){
+                                if(oEnemy.parentNode){
+                                    oEnemy.parentNode.removeChild(oEnemy);
+                                }
+                            },300);
+                            break;
+                        }
+                    }
+                },50)
+
+//和战机的碰撞检测
+                oEnemy.bopTimer=setInterval(function(){
+                    if(Game.boom(oEnemy,plane)){
+                        plane.src='img/boom2.png';
+                        clearInterval( oEnemy.bopTimer )////!!!!!
+                        clearInterval(Game.biutimer);
+                        clearInterval(Game.enemyTimer);//敌军不产生
+                        setTimeout(function(){
+                            Game.over(oDiv);
+                        },50)
+                    }
+                },50)
+            },speed)//生成速度
+        },
+        boom:function(obj1,obj2){
+            var T1=obj1.offsetTop;
+            var B1=obj1.offsetTop+obj1.offsetHeight;
+            var L1=obj1.offsetLeft;
+            var R1=obj1.offsetLeft+obj1.offsetWidth;
+
+            var T2=obj2.offsetTop;
+            var B2=obj2.offsetTop+obj2.offsetHeight;
+            var L2=obj2.offsetLeft;
+            var R2=obj2.offsetLeft+obj2.offsetWidth;
+
+            if(T1>B2||B1<T2||L1>R2||R1<L2){
+                return false;
+            }
+            else{
+                return true;
+            }
+        },
+        over:function(oGameBox){
+            oGameBox.innerHTML='';
+            var oDiv=document.createElement('div');
+            oDiv.style.cssText='width:200px;height:400px;margin:50px;background:#000;';
+            var oH=document.createElement('h3');
+            oH.innerHTML='游戏结束';
+            oH.style.cssText = 'padding-top:50px;color:red'
+            var oP=document.createElement('p');
+            oP.innerHTML='您的得分：<span style="font-weight: bold;background:#fff">'+ this.score+'</span>分';
+            oP.style.cssText='width:180px;height:40px;line-height:40px;margin:10px;cursor:pointer;background:#fff';
+            var reStart=document.createElement('p');
+            reStart.innerHTML='重新开始';
+            reStart.style.cssText='width:180px;height:40px;line-height:40px;margin:10px;cursor:pointer;background:#fff';
+            reStart.onclick=function(){
+                Game.init();
+            };
+            oDiv.appendChild(oH);
+            oDiv.appendChild(oP);
+            oDiv.appendChild(reStart);
+            oGameBox.appendChild(oDiv);
+
+        },
+        getClass:function(cN,parent){
+            var parent=parent||document;
+            if(document.getElementsByClassName){
+                return parent.getElementsByClassName(cN);
+            }
+            else{
+                var all=parent.getElementsByTagName('*');
+                var arr=[];
+                for(var i=0;i<all.length;i++){
+                    var arrClass=all.className.split(' ');
+                    for(var j=0;j<arrClass.length;j++){
+                        if(arrClass[j]==cN){
+                            arr.push(all[i]);
+                            break;
+                        }
+                    }
+                }
+                return arr;
+            }
+        }
+    }
+</script>
+</body>
+</html>

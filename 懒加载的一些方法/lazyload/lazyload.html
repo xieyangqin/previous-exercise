@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>懒加载</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            margin-top: 1000px;
+        }
+        img{
+            display: block;
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="box" id="box">
+    <img src="images/2.png" data-src="images/1.png" alt="" >
+    <img src="images/2.png" data-src="images/2.png" alt="" >
+    <img src="images/2.png" data-src="images/3.png" alt="" >
+    <img src="images/2.png" data-src="images/4.png" alt="" >
+    <img src="images/2.png" data-src="images/5.png" alt="" >
+    <img src="images/2.png" data-src="images/6.png" alt="" >
+</div>
+<script>
+    var box=document.getElementById('box');
+    var boxHeight=box.offsetHeight;
+    var boxTop=box.offsetTop;
+    var documentHeight=document.documentElement.clientHeight||document.body.clientHeight;
+    var img=box.getElementsByTagName('img');
+    window.onscroll=function(){
+       var scrollTop=document.documentElement.scrollTop||document.body.scrollTop;
+       for(var i=0;i<img.length;i++){
+           if(img[i].offsetHeight+img[i].offsetTop<documentHeight+scrollTop){
+               img[i].src=img[i].getAttribute('data-src')
+           }
+        }
+    }
+</script>
+</body>
+</html>

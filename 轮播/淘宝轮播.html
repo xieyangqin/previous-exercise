@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>淘宝轮播</title>
+    <style type="text/css">
+        *{padding:0 ; margin: 0px}
+        .wrap{width:520px;height:180px; margin:50px auto ;position: relative;overflow:hidden}
+        #pic{ width:520px; height:180px;}
+        img{ width:520px; height:180px;}
+        #pic ul{ width:1000%; height: 180px;}
+        #pic ul li { float:left; list-style: none; }
+        #pic ul li a, #pic ul li img{ display: block }
+
+        #btn div{ width:25px; height:35px; background:rgba(0,0,0,0.1); font-size: 16px; line-height:35px;text-align:center; font-weight:bold; cursor:pointer; position:absolute; top:50%;margin-top:-17px;}
+        #btn #left{ position:absolute;left:0px; }
+        #btn #right{ position:absolute; right:0px; }
+
+        #tab{  width:71px;  height:14px;  border-radius:7px;  background:rgba(255,255,255,.5);  position:absolute;  left:50%;  margin-left:-35px;  bottom:10px;  }
+        #tab ul li{  width:10px;  height:10px;  border-radius:100%;  float:left;  margin:2px 2px;  background:#999;  cursor:pointer;  list-style:none;  }
+        #tab ul li.on{  background:#f60;  }
+
+    </style>
+    <script src="jquery.js/jquery-3.2.1.js"></script>
+
+</head>
+<body>
+    <div class="wrap">
+        <div id="pic">
+            <ul>
+                <li><a href=""><img src="img/1.png"/></a></li>
+                <li><a href=""><img src="img/2.png"/></a></li>
+                <li><a href=""><img src="img/3.png"/></a></li>
+                <li><a href=""><img src="img/4.png"/></a></li>
+                <li><a href=""><img src="img/5.png"/></a></li>
+            </ul>
+        </div>
+
+        <div id="btn">
+            <div id="left"><</div>
+            <div id="right">></div>
+        </div>
+
+        <div id="tab">
+          <ul>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+          </ul>
+        </div>
+    </div>
+
+    <script>
+        (function(){
+
+            var $btn=$('#btn div');
+            var $picUl=$('#pic ul ');
+            var $picLi=$('#pic ul li');
+            var $tabLi=$('#tab ul li');
+            var $wrap=$('.wrap');
+            var nowTime = 0;
+            var imgIndex=0;
+            var timer;
+            clone();
+            auto();//自动播放
+
+            $btn.click(function(){
+                if(new Date()-nowTime>500){
+                    nowTime = new Date();
+
+                    var i=$(this).index();
+                    if(i){
+                        //右箭头
+                        imgIndex++;
+                        var x = imgIndex;
+                        x %= $tabLi.length;
+                        if ( x<0 )x = $tabLi.length-1;
+                        $tabLi.eq(x).addClass('on').siblings().removeClass('on');
+
+                        $picUl.stop().animate({
+                            marginLeft:-520*(imgIndex+1)+'px'
+                        },300,function(){
+
+                            if(imgIndex==$picLi.length-2){
+                                $(this).css({marginLeft:-520+'px'});
+                                imgIndex =0;
+                            }
+                        })
+
+
+                    }else{
+                        //左箭头
+                        imgIndex--;
+                        var x = imgIndex;
+                        x %= $tabLi.length;
+                        if ( x<0 )x = $tabLi.length-1;
+                        $tabLi.eq(x).addClass('on').siblings().removeClass('on');
+                        $picUl.stop().animate({
+                            marginLeft:-520*(imgIndex+1)+'px'
+                        },300,function(){
+
+
+                            if(imgIndex==-1){
+                                $(this).css({marginLeft:-520*($picLi.length-2)+'px'});
+                                imgIndex =$picLi.length-3;
+                            }
+                        })
+                    }
+                }
+
+        })
+            $tabLi.click(function(){
+                imgIndex=$(this).index();
+                console.log(imgIndex);
+                $(this).attr('class','on').siblings('li').removeAttr('class');
+                $picUl.stop().animate({
+                    marginLeft:-520*(imgIndex+1)+'px'
+                },300)
+            });
+            $wrap.hover(function(){
+                clearInterval(timer)
+            },function(){
+                auto();
+            })
+
+            function clone(){
+                var $clonefirst=$picLi.eq(0).clone();
+                var $clonelast=$picLi.eq($picLi.length-1).clone();
+
+                $picUl.append($clonefirst);
+                $picUl.prepend($clonelast);
+                $picLi=$('#pic ul li');
+
+                $picUl.css({
+                    marginLeft:-520+'px'
+                })
+                $tabLi.eq(0).attr('class','on').siblings('li').removeAttr('class');
+            }
+
+            function auto(){
+                timer=setInterval(function(){
+                    imgIndex++;
+                    var x = imgIndex;
+                    x %= $tabLi.length;
+                    if ( x<0 )x = $tabLi.length-1;
+                    $tabLi.eq(x).addClass('on').siblings().removeClass('on');
+
+                    $picUl.stop().animate({
+                        marginLeft:-520*(imgIndex+1)+'px'
+                    },300,function(){
+
+                        if(imgIndex==$picLi.length-2){
+                            $(this).css({marginLeft:-520+'px'});
+                            imgIndex =0;
+                        }
+                    })
+                },1500)
+            }
+        })();
+    </script>
+</body>
+</html>

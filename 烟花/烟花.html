@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>烟花</title>
+<style>
+    *{padding:0;margin:0}
+    html{height:100%;}
+    body{background:black;overflow: hidden;height:100%;}
+    .bullet{ width:10px;height:50px;border-radius:50%;background: green;position:absolute}
+    .fire{position:absolute;width:10px;height:10px;border-radius: 50%;background: red}
+</style>
+</head>
+<body>
+
+<script>
+    document.onclick=function(e){
+        var e=e||window.event;
+        var x=e.clientX;
+        var y=e.clientY;
+        var timer=null;
+        var h=document.body.clientHeight;
+        console.log(e);
+        var oDiv=document.createElement('div');
+        oDiv.className = 'bullet';
+        oDiv.style.left=x+'px';
+        oDiv.style.top=h+'px';
+        oDiv.style.background=color();
+        document.body.appendChild(oDiv);
+        var speed=10;
+        timer=setInterval(function(){
+            oDiv.style.top=oDiv.offsetTop-speed+'px';
+            if(oDiv.offsetTop<=y){
+                oDiv.style.top=y+'px';
+                clearInterval(timer);
+                document.body.removeChild(oDiv);
+                //到达鼠标位置后，生成碎花
+               fire(x,y,h);
+            }
+        },1000/60);
+
+    }
+
+    function fire(x,y,h){
+        var fire=[];
+        var n=Math.ceil(Math.random()*50+50);
+        for(var i=0;i<n;i++){
+            fire[i]=document.createElement('div');
+            fire[i].className='fire';
+            fire[i].style.top=y+'px';
+            fire[i].style.left=x+'px';
+            fire[i].speedX=Math.random()*20-10;
+            fire[i].speedY=Math.random()*20-10;
+            fire[i].style.background=color();
+            document.body.appendChild(fire[i]);
+        }
+        var t=setInterval(function(){
+            for(var i=0;i<n;i++){
+                fire[i].style.top=fire[i].offsetTop+fire[i].speedY+'px';
+                fire[i].style.left=fire[i].offsetLeft+fire[i].speedX+'px';
+                fire[i].speedY+=0.5;
+              if(fire[i].offsetLeft>document.body.clientWidth||fire[i].offsetTop>h||fire[i].offsetLeft<0){
+                 document.body.removeChild(fire[i]);
+              }
+            }
+        },1000/60);
+    }
+
+    function color(){
+        var r=Math.floor(Math.random()*256);
+        var g=Math.floor(Math.random()*256);
+        var b=Math.floor(Math.random()*256);
+        return 'rgb('+r+','+g+','+b+')';
+    }
+
+    function color1(){
+        return '#'+function(color){
+            return color;
+            }((Math.random()*0x1000000<<0).toString(16))
+    }
+</script>
+</body>
+</html>

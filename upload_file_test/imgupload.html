@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .img-box {
+            width: 400px;
+            height: 200px;
+            border: 1px palevioletred dashed;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="img-box">
+    <img src="" alt="" id="im">
+</div>
+<input type="file" id="input_file">
+<input type="button" id="upload" value="上传">
+
+<script>
+    var im = document.getElementById('im');
+
+    var validate = (function () {
+        function getFile() {
+            var file = document.getElementById('input_file').files[0];
+            console.log(file);
+            var reader = new FileReader();
+            var filesResult;
+
+            try {
+                //正式读取文件
+                reader.readAsArrayBuffer(file);
+                reader.onload = function (e) {
+                    filesResult = e.target.result;
+                    var view = new DataView(filesResult);
+                    var first4Bytes = view.getUint32(0, false);
+                    var first4BytesHex = Number(first4Bytes).toString(16).toUpperCase();
+                      filter(file, filesResult, first4BytesHex);
+                };
+            } catch (e) {
+                alert("你尚未选择上传文件");
+            }
+        }
+
+        function filter(file, filesResult, first4BytesHex) {
+            var flag=false;
+            switch (first4BytesHex) {
+                case 'FFD8FFE0':
+                case 'FFD8FFE1':
+                case 'FFD8FFE2':
+                case 'FFD8FFE3':
+                    flag=true;
+                    break;
+                case '89504E47':
+                    flag=true;
+                    break;
+                case '47494638':
+                    flag=true;
+                    break;
+                case '52494646':
+                    break;
+                default:
+                    break;
+            }
+
+            if (!flag) {
+                im.setAttribute('src', '');
+                alert("格式不对");
+                return;
+            } else if (file.size >= 200000) {
+                im.setAttribute('src', '');
+                alert("图片大小超出");
+            } else {
+                var img = new Image();
+                var dataURL = window.URL.createObjectURL(file);
+                img.onload = function () {
+                    var w = img.width, h = img.height, ratio = w / h;
+                    if (ratio < 2) {
+                        im.setAttribute('src', dataURL);
+                    } else {
+                        im.setAttribute('src', '');
+                        alert('宽高比例大于2');
+                    }
+                    img = null;
+                };
+                img.src = dataURL;
+            }
+        }
+
+        return {
+            getFile: getFile
+        };
+    })();
+
+    var upload = document.getElementById('upload');
+    upload.addEventListener('click', validate.getFile, false);
+
+
+</script>
+</body>
+</html>

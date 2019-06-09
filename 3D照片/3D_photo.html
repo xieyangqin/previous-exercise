@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>3D_photo</title>
+    <style type="text/css">
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        body{
+            overflow: hidden;
+            background-color: #666699;
+        }
+        #prespective{
+            perspective: 800px;
+        }
+        #wrap{
+            position: relative;
+            margin: 200px auto;
+            width:150px;
+            height:200px;
+
+            transform-style: preserve-3d;
+            transform: rotateX(-10deg) rotateY(0deg);
+        }
+        #wrap img{
+            position: absolute;
+            top:0;
+            width:150px;
+            height: 200px;
+            border-radius: 5px;
+            box-shadow:0px 0px 6px #000;
+            transform: rotateX(0deg) rotateY(0deg);
+        }
+
+    </style>
+</head>
+<body>
+    <div id="prespective">
+        <div id="wrap">
+            <img src="images/image-animal/1.png"/>
+            <img src="images/image-animal/2.png"/>
+            <img src="images/image-animal/3.png"/>
+            <img src="images/image-animal/4.png"/>
+            <img src="images/image-animal/5.png"/>
+            <img src="images/image-animal/6.png"/>
+            <img src="images/image-animal/7.png"/>
+            <img src="images/image-animal/8.png"/>
+            <img src="images/image-animal/9.png"/>
+            <img src="images/image-animal/10.png"/>
+            <img src="images/image-animal/11.png"/>
+            <img src="images/image-animal/12.png"/>
+        </div>
+    </div>
+
+<script type="text/javascript">
+    /**
+     * 1、获取img的标签
+     *
+     */
+
+    window.onload=function() {
+        var owrap=document.getElementById("wrap");
+        var oimg = document.getElementsByTagName('img');
+        var degree = 360 / oimg.length;
+        Array.prototype.forEach.call(oimg, function (el, index) {
+            //console.log(el);
+            // el.style.transform="rotateX("+0+"edg) rotateY("+degree+"edg)"
+            //console.log(degree * index);
+
+            el.style.transform = "rotateY(" + degree * index + "deg) translateZ(350px)";
+            el.style.zIndex = -index;
+            el.style.transition="all 1s"+" "+ index * 0.08 + "s";
+        });
+
+        var currClientX,currClientY,lastClientX,lastClientY,distanceX,distanceY,totalx=-10,totaly=0;
+        var timer;
+        document.onmousedown = function (evnt) {
+            var event = evnt ? evnt : window.event;
+           //console.log(event);
+            lastClientX=event.clientX;
+            lastClientY=event.clientY;
+//             console.log(lastClientX);
+//             console.log(lastClientY);
+            this.onmousemove = function (evnt) {
+                var event = evnt ? evnt : window.event;
+                currClientX=event.clientX;
+                currClientY=event.clientY;
+
+                //console.log(currClientX);
+               // console.log(currClientY);
+
+                distanceX=currClientX-lastClientX;
+                distanceY=currClientY-lastClientY;
+//                console.log(distanceX);
+//                console.log(distanceY);
+                totalx+=distanceY;
+                totaly-=distanceX;
+                owrap.style.transform = "rotateX(" + totalx*0.05 + "deg) rotateY(" + totaly*0.05 + "deg)";
+
+                console.log("rotateX("+totalx+"deg) rotateY("+totaly+"deg)");
+            }
+                this.onmouseup = function () {
+                    this.onmousemove=null;
+                    timer=setInterval(function(){
+
+                        distanceX*=0.95;
+                        console.log(distanceX);
+                        distanceY*=0.95;
+                        totalx+=distanceY;
+                        totaly-=distanceX;
+                        owrap.style.transform = "rotateX(" + totalx*0.05 + "deg) rotateY(" + totaly*0.05 + "deg)";
+                        if(distanceX<0.1&&distanceY<0.1){
+                            clearInterval(timer)
+                        }
+                    },1000/60);
+                    this.onmouseup=null;
+                }
+
+        }
+
+
+    }
+
+</script>
+</body>
+</html>

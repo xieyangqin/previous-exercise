@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title></title>
+    <script src="js/jquery-3.2.1.js"></script>
+    <script src="js/jquery.jqzoom.js"></script>
+    <link href="j.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(function () {
+            $('#img1').jqzoom({
+                zoomWidth:100,
+                zoomHeight:100,
+                position:"bottom",
+                yOffset:50,
+                lens:true,
+                imageOpacity:1.0
+            });
+        })
+    </script>
+</head>
+
+<div style="margin-left:500px;">
+    <a id="img1" href="img/pro_img/blue_one_big.jpg" title="" ><img src="img/pro_img/blue_one_small.jpg" alt="" /></a>
+</div>
+</body>
+</html>
